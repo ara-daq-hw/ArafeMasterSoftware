@@ -183,21 +183,11 @@ int main(int argc, char **argv){
 			}
 			if(v) printf("connection successful, retval is %d\n",retval); //print out a confirmation if verbosity is active
 			
-			//check they want to do something to a slave that exists
-			//we do this check so that the transmission registers aren't pre-loaded with something before we know if the transmission will be valid
+			//load the slave
 			int slave = atoi(argv[1]);
-			 //check to see if they're doing something dumb about which slave to alter
-			if( slave < 0 || slave >3){
-				printf(stderr, "You can only turn on one of the four slaves (indexed 0 -> 3)\n"); //tell them
-				exit(1); //get out
-			}
-			
-			//it would be difficult to write argument checking for the argument and command, but should probably try at some point in the future
 			
 			//need to set the command register, register 5
-			//char str_command[155]; //declare an empty bank for the bytes, make it unnecessarily large
-			char str_command = argv[2]; //the string should be set equal to the second thing passed to the function, which is the command for the slave
-			int int_ver_command = (int) strtol(str_command, NULL, 16); //convert this to an int
+			int int_ver_command = atoi(argv[2]); //get the command they entered
 			unsigned char command = (unsigned char) int_ver_command; //convert this to an unsigned character
 			unsigned char command_reg = 0x05; //the command register for the ARAFE master is register 5
 			retval = arafeWriteRegister(auxFd, command_reg, command); //actually write to the register
@@ -207,10 +197,9 @@ int main(int argc, char **argv){
 			}
 			if(v) printf("setting the command register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
 			
+			
 			//need to set the argument register, register 6
-			//char str_argument[155]; //declare an empty bank for the bytes, make it unnecessarily large
-			char str_argument = argv[3]; //the string should be set equal to the third thing passed to the function, which is the argument for the slave
-			int int_ver_argument = (int) strtol(str_argument, NULL, 16); //convert this to an int
+			int int_ver_argument = atoi(argv[3]); //get the argument they entered
 			unsigned char argument = (unsigned char) int_ver_argument; //convert this to an unsigned character
 			unsigned char argument_reg = 0x06; //the argument register for the ARAFE master is register 6
 			retval = arafeWriteRegister(auxFd, argument_reg, argument); //actually write to the register	
@@ -219,20 +208,19 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the argument register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
-
 			
 			//need to set the slavectrl register, register 4
 			//we set the slavectrl register last because setting the high bit of this register will actually trigger the dispatch to the slave
-			unsigned char command;
 			
 			//there are only four options
 			//100000xx, where xx decides which of the four slaves (0->3) to send to
 			//so let's do the easy thing, and just hard code them
-			if(slave==0) command = 0x80; //if you want to send to slave 0
+			if (slave==0) command = 0x80; //if you want to send to slave 0
 			else if (slave==1) command = 0x81; //if you want to send to slave 1
 			else if (slave==2) command = 0x82; //if you want to send to slave 2
-			else if (slave ==3) command = 0x03; //if you want to send to slave 3
-			else printf("You have entered an invalid slave number");
+			else if (slave==3) command = 0x83; //if you want to send to slave 3
+			else printf("You have entered an invalid slave number\n");
+			if(v) printf("working on slave %d\n",slave);
 			unsigned char ctrl_reg = 0x04; //for power control, this is the register that's necessary
 			retval = arafeWriteRegister(auxFd, ctrl_reg, command); //actually write to the register
 			if( retval<0){ //if it fails
@@ -240,13 +228,8 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the control register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
-
-			//check for timeout
-			unsigned char updated_reg; //we need to read the register and see if the high bit got set, which would mark a timeout condition
-			arafeReadRegister(auxFd, ctrl_reg , &updated_reg); //read the register
-			if((updated_reg <<1)>>7) printf("The slave reported a timeout condition"); //check if the sixth bit is set high (shift up 1 to kill the 7th bit, then shift down 7 to put the sixth bit in the zero position)
 			
-			disableExpansionPort(auxFd, 0); //enable the expansion port
+			disableExpansionPort(auxFd, 0); //disable the expansion port
 			exit(0);
 			
 		}
