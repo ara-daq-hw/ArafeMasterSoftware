@@ -3,8 +3,9 @@
  * 
  * Usage
  *
- * type "./bsl file.name" where file.name is the name of the binary file you want to program
+ * type "./arafebsl program file.name" where file.name is the name of the binary file you want to program.
  *
+ * You can also type "./arafebsl erase" to erase the memory without reprogramming. This will require a reboot before programming. 
  */
 #include <stdio.h>
 #include <unistd.h>
@@ -50,11 +51,11 @@ void main(int argc, char **argv){
 	
 	
 	while(argc){ //okay, loop over the arguments
-		if (strstr(*argv, "program")) { //if the command is to change the power settings
+		if (strstr(*argv, "program")) { //if the command is to program the arafe master
 
 			retval = enableExpansionPort(auxFd,0);
 			if (retval<0) { //throw an error if that fails
-				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX0\n");
+				printf("Something went wrong with assigning the ARAFE master to EX0\n");
 				exit(1); //exit
 			}
 			if(v) printf("connection successful, retval is %d\n",retval); //print out a confirmation if verbosity is active
