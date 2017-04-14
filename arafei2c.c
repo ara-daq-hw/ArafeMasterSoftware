@@ -5,7 +5,7 @@
 #include "arafei2c.h"
 #include "fx2ComLib/fx2Com.h"
 
-const unsigned char ic2_addr = 0X30; //the I2C address of the ARAFE Master, defined in the firmware (https://github.com/ara-daq-hw/arafe-master)
+const unsigned char i2c_addr = 0X30; //the I2C address of the ARAFE Master, defined in the firmware (https://github.com/ara-daq-hw/arafe-master)
 
 
 //this function is a direct copy from the icecal version, and I don't understand what it's doing
@@ -35,13 +35,22 @@ int icecalAssign(int auxFd, unsigned int cpuId, unsigned char port) {
 
 //this is the actual assign code for the ARAFE
 int arafeAssign(int auxFd, unsigned int cpuId, unsigned char port){
-	
+        unsigned char data[5]; //data to send
+        int retval; //a return value
+        //load the information
+        data[0] = cpuId & 0XFF;
+        data[1] = (cpuId >> 8) & 0xFF;                                                                                                                                                                                                       
+        data[2] = (cpuId >> 16) & 0xFF;                                                                                                                                                                                                      
+        data[3] = (cpuId >> 24) & 0xFF;                                                                                                                                                                                                      
+        data[4] = 0x30; //this should assing the I2C port of the device      
+        return 0;
 }
 
 
-int initializeIceCalI2C(int auxFd) {  
+//intialize the ARAFE Master
+int initializeArafeI2C(int auxFd) {
  	int retval;
-	printf("ARAFE Master assigned I2C address 0x0A\n");
-	retval = arafeAssign(auxFd, icecal_A, ICECAL_PORTA);
+	printf("ARAFE Master assigned I2C address 0x30. FYI this is hard coded\n");
+	//retval = arafeAssign(auxFd, icecal_A, ICECAL_PORTA);
 	return 0;
 }

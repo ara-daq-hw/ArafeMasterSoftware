@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 			}
 			//here, I'm going to declare that we want the ARAFE Master to be on EX3, the fourth I2C port when I try to connect to it
 			if ((retval = enableAtriComponents(auxFd, ext_i2c[3]))<0) { //try and enable this port, and throw an error if that fails
-				fprintf(stderr, "this is an error message\n");
+				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX3\n");
 				exit(1);
 			}
 		}

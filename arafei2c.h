@@ -9,7 +9,7 @@
 int initializeArafeI2C(int auxFd);
 
 #ifndef ARAFEI2C_C
-extern unsigned char ic2_addr; //the I2C address of the ARAFE
+extern unsigned char i2c_addr; //the I2C address of the ARAFE
 #endif
 
 #endif
