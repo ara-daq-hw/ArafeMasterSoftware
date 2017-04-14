@@ -1,7 +1,6 @@
 #ifndef ATRICOMPONENTS_H
 #define ATRICOMPONENTS_H
 
-
 typedef enum atriExpansionPort {
   EX1 = 0,
   EX2 = 1,
@@ -27,6 +26,7 @@ int enableExpansionPort(int auxFd, AtriExpansionPort_t port);
 	*/
 int disableExpansionPort(int auxFd, AtriExpansionPort_t port);
 
+//the ATRI component mask, ie, what's hiding at each address
 typedef enum atriComponentMask {
   EX1_mask = 0x01,
   EX2_mask = 0x02,

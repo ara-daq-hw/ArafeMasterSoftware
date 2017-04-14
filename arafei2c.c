@@ -3,7 +3,6 @@
 #define ARAFEI2C_C
 #include "arafe.h"
 #include "arafei2c.h"
-#include "ARAFED.H"
 #include "fx2ComLib/fx2Com.h"
 
 const unsigned char ic2_addr = 0X30; //the I2C address of the ARAFE Master, defined in the firmware (https://github.com/ara-daq-hw/arafe-master)
@@ -41,8 +40,8 @@ int arafeAssign(int auxFd, unsigned int cpuId, unsigned char port){
 
 
 int initializeIceCalI2C(int auxFd) {  
-  int retval;
-  printf("ARAFE Master assigned I2C address 0x0A\n");
-  retval = arafeAssign(auxFd, icecal_A, ICECAL_PORTA);
-  return 0;
- 
+ 	int retval;
+	printf("ARAFE Master assigned I2C address 0x0A\n");
+	retval = arafeAssign(auxFd, icecal_A, ICECAL_PORTA);
+	return 0;
+}

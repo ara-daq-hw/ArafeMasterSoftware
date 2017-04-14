@@ -16,8 +16,7 @@ const char *ext_i2c_str[4] = {
 
 int enableExpansionPort(int auxFd, AtriExpansionPort_t port) {
 	int retval; //a return value
-	// Enable each one in turn.
-	if ((retval = enableAtriComponents(auxFd, ext_i2c[port])) < 0) {
+	if ((retval = enableAtriComponents(auxFd, ext_i2c[port])) < 0) { //do some error handling
 		fprintf(stderr, "%s: error %d enabling expansion port %s\n", __FUNCTION__,
 			retval,
 			ext_i2c_str[port]);
