@@ -47,14 +47,20 @@ int main(int argc, char **argv){
 	while(argc){ //okay, loop over the arguments
 		if (strstr(*argv, "connect")) { //if the command is to initialize the port
 			//here, I'm going to declare that we want the ARAFE Master to be on EX0, the first I2C port when I try to connect to it
-			if ((retval = enableAtriComponents(auxFd, ext_i2c[0]))<0) { //try and enable this port, and throw an error if that fails
+		        retval = enableAtriComponents(auxFd, ext_i2c[0]);
+		        if (retval<0) { //try and enable this port, and throw an error if that fails
 				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX3\n");
 				exit(1);
 			}
-		        else printf("connection successful\n");
+		        else printf("connection successful, retval is %d\n",retval);
 		}
 		if (strstr(*argv, "power")) { //if the command is to change the power settings
-			//code needs to be added here to do power control
+		        retval = arafeWriteRegister(auxFd, 0x00, 0x8F);
+		        if( retval<0){; //write to register 0 (POWERCTL)  with 8F (High bit set and all slaves on)
+		                printf("retval is %d, and setting the power failed\n", retval);
+			}
+		        else printf("setting the power was successful, and retval is %d\n", retval);
+		        //code needs to be added here to do power control
 		}
 		if (strstr(*argv, "att")) { //if the command is to change the attenuator settings
 			//code needs to be added here to do attenuator control
