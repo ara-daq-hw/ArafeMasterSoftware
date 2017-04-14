@@ -45,8 +45,8 @@ int main(int argc, char **argv){
 				fprintf(stderr, "Error opening connection to FX2_CONTROL_SOCKET\n");
 				exit(1);
 			}
-			//here, I'm going to declare that we want the ARAFE Master to be on EX3, the fourth I2C port when I try to connect to it
-			if ((retval = enableAtriComponents(auxFd, ext_i2c[3]))<0) { //try and enable this port, and throw an error if that fails
+			//here, I'm going to declare that we want the ARAFE Master to be on EX0, the first I2C port when I try to connect to it
+			if ((retval = enableAtriComponents(auxFd, ext_i2c[0]))<0) { //try and enable this port, and throw an error if that fails
 				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX3\n");
 				exit(1);
 			}
