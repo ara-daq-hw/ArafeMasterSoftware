@@ -2,5 +2,6 @@ Design Information
 
 There will be three components of the software
 1: ArafeD -- the main program
+2: Arafe -- abstraction of the ArafeD functions
 2: ArafeI2C -- the program that executes the ArafeD functions through the I2C interface
 3: atriComponents -- handles enabling/disabling component stuff on the ATRI board
