@@ -12,8 +12,6 @@
 #include "arafe.h"
 #include "arafei2c.h"
 
-
-
 // WRITE TO A REGISTER
 int arafeWriteRegister(int auxFd, unsigned char reg, unsigned char value) {
 	unsigned char data[2];
