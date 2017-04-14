@@ -41,7 +41,7 @@ int main(int argc, char **argv){
 	while(argc){ //okay, loop over the arguments
 		if (strstr(*argv, "init")) { //if the command is to initialize the port
 			auxFd = openConnectionToFx2ControlSocket(); //open a connection to the FX2 control socket
-			if(auxFx ==0){ //check to see if the FX2 connection actually got made
+			if(auxFd ==0){ //check to see if the FX2 connection actually got made
 				fprintf(stderr, "Error opening connection to FX2_CONTROL_SOCKET\n");
 				exit(1);
 			}

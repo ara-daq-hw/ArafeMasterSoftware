@@ -10,7 +10,7 @@
 	\param value The value you want to write to that register
 	\return Integer for succes or failure of the function. Zero means success, negative number means failure.
 	*/
-int int arafeWriteRegister(int auxFd, unsigned char reg, unsigned char value);
+int arafeWriteRegister(int auxFd, unsigned char reg, unsigned char value);
 
 
 //! Function to read to an ARAFE register
