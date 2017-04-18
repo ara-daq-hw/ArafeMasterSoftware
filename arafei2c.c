@@ -5,7 +5,7 @@
 #include "arafei2c.h"
 #include "fx2ComLib/fx2Com.h"
 
-const unsigned char i2c_addr = 0X30; //the I2C address of the ARAFE Master, defined in the firmware (https://github.com/ara-daq-hw/arafe-master)
+const unsigned char i2c_addr = (0x1E) << 1; //the I2C address of the ARAFE Master, defined in the firmware (https://github.com/ara-daq-hw/arafe-master)
 
 
 //this function is a direct copy from the icecal version, and I don't understand what it's doing

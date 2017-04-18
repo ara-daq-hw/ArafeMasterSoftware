@@ -42,7 +42,7 @@ int main(int argc, char **argv){
 	        fprintf(stderr,"Error opening connection to FX2_CONTROL_SOCKET\n");
 	        exit(1);
         }
-   
+        printf("using aux port %d\n",auxFd);
    
 	while(argc){ //okay, loop over the arguments
 		if (strstr(*argv, "connect")) { //if the command is to initialize the port
@@ -55,12 +55,17 @@ int main(int argc, char **argv){
 		        else printf("connection successful, retval is %d\n",retval);
 		}
 		if (strstr(*argv, "power")) { //if the command is to change the power settings
-		        retval = arafeWriteRegister(auxFd, 0x00, 0x8F);
-		        if( retval<0){; //write to register 0 (POWERCTL)  with 8F (High bit set and all slaves on)
+		        unsigned char reg = 0x00;
+		        unsigned char value = 0X84;
+		        //enableAtriComponents(auxFd, ext_i2c[0]);
+		        enableExpansionPort(auxFd, 0);
+		        //enableAtriComponents(auxFd, ext_i2c[0]);
+		        retval = arafeWriteRegister(auxFd, reg, value);
+		        //retval = arafeReadRegister(auxFd, 0x00);
+		        if( retval<0){ //write to register 0 (POWERCTL)  with 8F (High bit set and all slaves on)
 		                printf("retval is %d, and setting the power failed\n", retval);
 			}
 		        else printf("setting the power was successful, and retval is %d\n", retval);
-		        //code needs to be added here to do power control
 		}
 		if (strstr(*argv, "att")) { //if the command is to change the attenuator settings
 			//code needs to be added here to do attenuator control
