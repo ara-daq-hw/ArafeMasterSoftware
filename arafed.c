@@ -3,8 +3,10 @@
  * 
  * Available commands:
  * power - change the power settings for the four ARAFE slaves; you must change all four at once
- * connect - intializes the connection to the ARAFE master through the I2C port
  * att - change the attenuator settings for any of the four ARAFE slaves
+ * 
+ * 
+ * You can set the verbosity level setting the variable "int v" to either 0 (not verbose) or 1 (verbose)
  * 
  * Modeleded after the IceCal stuff by PSA
  *
@@ -28,6 +30,10 @@
 #include "arafed.h"
 #include "arafei2c.h"
 
+int v =1; //variable to control verbosity of the output, because c doesn't natively support booleans...
+//1 = verbose, 0 = not verbose (!0 = true,  0 = false)
+//naughty thing to do with a global variable, but oh well...
+
 //the new main for the ARAFE master
 int main(int argc, char **argv){
 
@@ -35,46 +41,65 @@ int main(int argc, char **argv){
 	int retval;
    
 	argc--; argv++; //decrease the number of parameters the program thinks it has
-        if(!argc) {printf("nothing in argc, quitting now\n"); exit(1); }
+	if(!argc) {printf("nothing in argc, quitting now\n"); exit(1); }
        
-        auxFd = openConnectionToFx2ControlSocket();
-        if(auxFd ==0) {
-	        fprintf(stderr,"Error opening connection to FX2_CONTROL_SOCKET\n");
-	        exit(1);
-        }
-        printf("using aux port %d\n",auxFd);
+	auxFd = openConnectionToFx2ControlSocket(); //open a connection to the 
+	if(auxFd ==0) {
+		fprintf(stderr,"Error opening connection to FX2_CONTROL_SOCKET\n");
+		exit(1);
+	}
+	if(v) printf("using aux port %d\n",auxFd); //print confirmation if verbosity is active
    
 	while(argc){ //okay, loop over the arguments
+		/*
 		if (strstr(*argv, "connect")) { //if the command is to initialize the port
-			//here, I'm going to declare that we want the ARAFE Master to be on EX0, the first I2C port when I try to connect to it
-		        retval = enableAtriComponents(auxFd, ext_i2c[0]);
-		        if (retval<0) { //try and enable this port, and throw an error if that fails
-				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX3\n");
+			//declare that we want the ARAFE Master to be on EX0 (the first I2C port) when I try to connect to it
+			retval = enableAtriComponents(auxFd, ext_i2c[0]); //enable this port
+			if (retval<0) { //throw an error if that fails
+				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX0\n");
+				exit(1); //exit
+			}
+			else{ //print out the confirmation only if verbosity (v) is active
+				 if(v) {printf("connection successful, retval is %d\n",retval);} //otherwise, the enable was successful, and we're good to go
+			}
+		}
+		*/
+		if (strstr(*argv, "power")) { //if the command is to change the power settings
+			//first, enable the expansion port, and declare that we want the ARAFE Master to be on EX0 (the first I2C port)
+			retval = enableExpansionPort(auxFd, 0); //enable the expansion port
+			if (retval<0) { //throw an error if that fails
+				fprintf(stderr, "Something went wrong with assigning the ARAFE master to EX0\n");
+				exit(1); //exit
+			}
+			if(v) printf("connection successful, retval is %d\n",retval); //print out a confirmation if verbosity is active
+		
+		
+			if((argv[1] > 1) || (argv[2] > 1) || (argv[3] > 1) || (argv[4] > 1)){
+				fprintf(stderr, "You can only turn a slave on or off with 0 or 1, nothing more\n"); //throw an error if the user tries to set them to something greater than 1
 				exit(1);
 			}
-		        else printf("connection successful, retval is %d\n",retval);
-		}
-		if (strstr(*argv, "power")) { //if the command is to change the power settings
-		        unsigned char reg = 0x00;
-		        unsigned char value = 0X84;
-		        //enableAtriComponents(auxFd, ext_i2c[0]);
-		        enableExpansionPort(auxFd, 0);
-		        //enableAtriComponents(auxFd, ext_i2c[0]);
-		        retval = arafeWriteRegister(auxFd, reg, value);
-		        //retval = arafeReadRegister(auxFd, 0x00);
-		        if( retval<0){ //write to register 0 (POWERCTL)  with 8F (High bit set and all slaves on)
-		                printf("retval is %d, and setting the power failed\n", retval);
+			//now to set up the transmission
+			//they need to set all slaves at once, so [xxxx] = [slave3 slave2 slave1 slave0]
+			char str[8]; //declare a blank eight bits
+			sprintf(str,"1000%d%d%d%d",argv[1],argv[2],argv[3],argv[4]); //form this up in binary 
+			int int_ver = (int) strtol(str, NULL, 2); //convert it to a integer number
+			unsigned char value = (unsigned char) int_ver; //convert it to an unsigned character (this is super naive and wrong, bug I want to have something here...)
+			//unsigned char value = 0X84; //teset value to pass to the slave; this is 10001111 cast into hex
+			unsigned char reg = 0x00; //for power control, this is the register that's necessary
+			retval = arafeWriteRegister(auxFd, reg, value);  //actually write to the register
+			
+			if( retval<0){ //write to register 0 (POWERCTL)  with 8F (High bit set and all slaves on)
+				printf("retval is %d, and setting the power failed\n", retval); //say something useful if it's wrong
+				exit(1); //exit
 			}
-		        else printf("setting the power was successful, and retval is %d\n", retval);
+			if(v) printf("setting the power was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
 		}
 		if (strstr(*argv, "att")) { //if the command is to change the attenuator settings
 			//code needs to be added here to do attenuator control
 		}
 
-	        argc--;
-	        argv++;
+		argc--; argv++; //now, advance the argument
 	} //finish looping over the arguments
-
    
 	close(auxFd);
 	return 0;
