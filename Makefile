@@ -12,7 +12,7 @@ arafed : arafed.o arafe.o arafei2c.o arafebsl.o
 	ln -sf $(shell pwd)/$@ ${ARA_DAQ_DIR}/bin
 
 arafebsl : arafebsl.o
-        @echo "<**Linking**> $@ (from $(OBJECTS)) ..."
+	@echo "<**Linking**> $@ (from $(OBJECTS)) ..."
 	$(LD) $(OBJECTS) $(LDFLAGS) $(ARA_LIBS) -lARAutil -lAraRunControl -lAtriControl -lAraFx2Com  -o $@
 	@chmod 555 $@
 	ln -sf $(shell pwd)/$@ ${ARA_DAQ_DIR}/bin
