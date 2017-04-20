@@ -14,6 +14,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #ifndef USB_I2C_DIOLAN
 #include "fx2ComLib/fx2Com.h"
@@ -46,8 +48,8 @@ int main(int argc, char **argv){
 
 	unsigned char value;
 	unsigned char reg = 0x80; //this is the register we need to write to to use the BSL
-	int file = open(argv[0]); //open the file you passed me
-	while (read(fd, &value, 1)> 0){
+	int file = open(argv[0], O_RDONLY); //open the file you passed me
+	while (read(file, &value, 1) > 0){
 		retval  = arafeWriteRegister(auxFd, reg, value); //write to the register
 		if( retval<0){ //if it fails
 			printf("retval is %d, and writing a byte during the BSL installation failed\n", retval); //say something useful if it's wrong
