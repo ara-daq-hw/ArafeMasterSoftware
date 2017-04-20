@@ -1,3 +1,4 @@
+
 /*
  * Simple Arafe-tough-I2C command interface.
  * 
@@ -224,7 +225,7 @@ int main(int argc, char **argv){
 			
 		}
 		
-		if (strstr(*argv, "monitoring")){ //check monitoring
+		if (strstr(*argv, "monitor")){ //check monitoring
 		        unsigned int result;
 	   
 			//first, enable the expansion port, and declare that we want the ARAFE Master to be on EX0 (the first I2C port)
