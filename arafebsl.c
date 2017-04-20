@@ -47,8 +47,10 @@ int main(int argc, char **argv){
 	if(v) printf("using aux port %d\n",auxFd); //print confirmation if verbosity is active
 
 	unsigned char value;
-	unsigned char reg = 0x80; //this is the register we need to write to to use the BSL
+	unsigned char reg = 0x40; //this is the register we need to write to to use the BSL
 	int file = open(argv[0], O_RDONLY); //open the file you passed me
+        enableExpansionPort(auxFd,0);
+        arafeWriteRegister(auxFd, reg, 0x55);
 	while (read(file, &value, 1) > 0){
 		retval  = arafeWriteRegister(auxFd, reg, value); //write to the register
 		if( retval<0){ //if it fails

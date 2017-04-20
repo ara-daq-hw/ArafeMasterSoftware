@@ -2,7 +2,8 @@
 
 include ${ARA_DAQ_DIR}/standard_definitions.mk
 Targets = arafed arafebsl
-arafed : OBJECTS = arafed.o arafe.o arafei2c.o arafebsl.o
+arafed : OBJECTS = arafed.o arafe.o arafei2c.o
+arafebsl : OBJECTS = arafebsl.o arafe.o arafei2c.o
 all: $(Targets)
 
 arafed : arafed.o arafe.o arafei2c.o arafebsl.o
