@@ -106,6 +106,7 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the power was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
+			disableExpansionPort(auxFd, 0); //enable the expansion port
 			exit(0); //successfully exit
 		}
 		
@@ -150,6 +151,7 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the power was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
+			disableExpansionPort(auxFd, 0); //enable the expansion port
 			exit(0); //successfully exit
 		}
 		
@@ -217,11 +219,12 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the control register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
-			
+			disableExpansionPort(auxFd, 0); //enable the expansion port
 			exit(0);
 			
 		}
-		if (strstr(*argv, "moni")){ //check monitoring
+		
+		if (strstr(*argv, "monitoring")){ //check monitoring
 		        unsigned int result;
 	   
 			//first, enable the expansion port, and declare that we want the ARAFE Master to be on EX0 (the first I2C port)
@@ -273,7 +276,8 @@ int main(int argc, char **argv){
 		        if(v) printf("high bits are %d\n", (unsigned int) high_bits);
 			result = result | (high_bits << 2);
 			printf("monitoring return value is %d\n", result);
-	                exit(0);
+			disableExpansionPort(auxFd, 0); //enable the expansion port
+			exit(0);
 		}
 		
 		

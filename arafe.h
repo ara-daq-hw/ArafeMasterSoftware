@@ -27,6 +27,17 @@ int arafeReadRegister(int auxFd, unsigned char reg, unsigned char * value);
 	\param auxFD
 	\return Integer for succes or failure of the function. Zero means success, negative number means failure.
 	*/
+	
+//! Function to write to the BSL register
+	/*!
+	\param auxFD
+	\param reg The register in the ARAFE memory you want to write to
+	\param value The value you want to write to that register
+	\return Integer for succes or failure of the function. Zero means success, negative number means failure.
+	*/
+int arafeWriteBSLRegister(int auxFd, unsigned char reg, unsigned char value);
+	
+	
 int initializeArafe(int auxFd);
 
 #endif

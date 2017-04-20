@@ -39,6 +39,18 @@ int arafeReadRegister(int auxFd, unsigned char reg, unsigned char * value){
         return retval; //return this value
 }
 
+// WRITE TO BSL REGISTER
+int arafeWriteBSLRegister(int auxFd, unsigned char reg, unsigned char value) {
+	unsigned char data[2];
+	data[0] = reg; //what register do you want to write to
+	data[1] = value; //what value do you want to write there (need 8 bits cast into hex)
+	//printf("register is %2.2x\n",data[0]);
+        //printf("value is %2.2x\n",data[1]);
+        int len = 2; //the length of the thing we want to pass is 2
+	int retval = writeToI2C(auxFd, i2c_bsl_addr, len, data); //write these things to I2C //the ic2_bsl_addr is defined in arafei2c.c, and is the I2C address of the ARAFE Master
+	return retval; //return this value
+}
+
 //INITIALIZE AN I2C INTERFACE
 //int initializeArafe(int auxFd){
 //	return initializeArafeI2C(auxFd); //just return the value of this function call //this function is defined in arafei2c
