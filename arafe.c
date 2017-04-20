@@ -27,14 +27,15 @@ int arafeWriteRegister(int auxFd, unsigned char reg, unsigned char value) {
 }
 
 // READ FROM A REGISTER
-int arafeReadRegister(int auxFd, unsigned char reg){
+int arafeReadRegister(int auxFd, unsigned char reg, unsigned char * value){
 	unsigned char data[1];
 	data[0] = reg;
 	int len = 1;
 	int retval = writeToI2C(auxFd, i2c_addr, len, data); //write to I2C
 	retval = readFromI2C(auxFd, i2c_addr | 0x1, len, data); //now read it
 	//data[0] now has the return data
-        printf("Register returned %d \n", data[0]);//so we print it out
+        //printf("Register returned %d \n", data[0]);//so we print it out
+        *value = data[0]; //pass this back out
         return retval; //return this value
 }
 

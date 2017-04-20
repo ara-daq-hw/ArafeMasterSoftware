@@ -1,7 +1,7 @@
 /*
- * Simple Arafe-through-I2C command interface.
+ * Simple Arafe-tough-I2C command interface.
  * 
- * Available commands (alphabetical list):
+ * Available ommands (alphabetical list):
  *
  * defaultpwr - change the power default settings for the four ARAFE slaves
  *              you must change all four at once
@@ -170,15 +170,15 @@ int main(int argc, char **argv){
 			int slave = atoi(argv[1]);
 			 //check to see if they're doing something dumb about which slave to alter
 			if( slave < 0 || slave !=0 || slave !=1 || slave !=2 || slave !=3){
-				printf(stderr, "You can only turn on one of the four slaves (indexed 0 -> 3)\n") //tell them
+				printf(stderr, "You can only turn on one of the four slaves (indexed 0 -> 3)\n"); //tell them
 				exit(1); //get out
 			}
 			
 			//it would be difficult to write argument checking for the argument and command, but should probably try at some point in the future
 			
 			//need to set the command register, register 5
-			char str_command[155]; //declare an empty bank for the bytes, make it unnecessarily large
-			str_command = argv[2]; //the string should be set equal to the second thing passed to the function, which is the command for the slave
+			//char str_command[155]; //declare an empty bank for the bytes, make it unnecessarily large
+			char str_command = argv[2]; //the string should be set equal to the second thing passed to the function, which is the command for the slave
 			int int_ver_command = (int) strtol(str_command, NULL, 16); //convert this to an int
 			unsigned char command = (unsigned char) int_ver_command; //convert this to an unsigned character
 			unsigned char command_reg = 0x05; //the command register for the ARAFE master is register 5
@@ -190,8 +190,8 @@ int main(int argc, char **argv){
 			if(v) printf("setting the command register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
 			
 			//need to set the argument register, register 6
-			char str_argument[155]; //declare an empty bank for the bytes, make it unnecessarily large
-			str_argument = argv[3]; //the string should be set equal to the third thing passed to the function, which is the argument for the slave
+			//char str_argument[155]; //declare an empty bank for the bytes, make it unnecessarily large
+			char str_argument = argv[3]; //the string should be set equal to the third thing passed to the function, which is the argument for the slave
 			int int_ver_argument = (int) strtol(str_argument, NULL, 16); //convert this to an int
 			unsigned char argument = (unsigned char) int_ver_argument; //convert this to an unsigned character
 			unsigned char argument_reg = 0x06; //the argument register for the ARAFE master is register 6
@@ -205,10 +205,10 @@ int main(int argc, char **argv){
 			//need to set the slavectrl register, register 4
 			//we set the slavectrl register last because setting the high bit of this register will actually trigger the dispatch to the slave
 			char str_ctrl[8]; //declare a blank eight bits
-			int settings = {0,0,0,0}; //declare an array for the four slaves they can pick from, and intialize with using "none", so all zeros
+			int settings[] = {0,0,0,0}; //declare an array for the four slaves they can pick from, and intialize with using "none", so all zeros
 			settings[slave] = 1; //for whatever slave they want turned on, turn that one on
-			sprintf(str,"1000%d%d%d%d",settings[0],settings[1],settings[2],settings[3]); //form this up in binary 
-			int int_ver = (int) strtol(str, NULL, 2); //convert it to a integer number
+			sprintf(str_ctrl,"1000%d%d%d%d",settings[0],settings[1],settings[2],settings[3]); //form this up in binary 
+			int int_ver = (int) strtol(str_ctrl, NULL, 2); //convert it to a integer number
 			unsigned char value = (unsigned char) int_ver; //convert it to an unsigned character
 			unsigned char reg = 0x04; //for power control, this is the register that's necessary
 			retval = arafeWriteRegister(auxFd, command_reg, command); //actually write to the register
@@ -221,9 +221,9 @@ int main(int argc, char **argv){
 			exit(0);
 			
 		}
-		
-		if (strstr(*argv, "monitor")){ //check monitoring
-
+		if (strstr(*argv, "moni")){ //check monitoring
+		        unsigned int result;
+	   
 			//first, enable the expansion port, and declare that we want the ARAFE Master to be on EX0 (the first I2C port)
 			retval = enableExpansionPort(auxFd, 0); //enable the expansion port
 			if (retval<0) { //throw an error if that fails
@@ -232,48 +232,48 @@ int main(int argc, char **argv){
 			}
 			if(v) printf("connection successful, retval is %d\n",retval); //print out a confirmation if verbosity is active
 
+		        if(argc<2){     
+			        printf("You need to pass me an argument! If you don't know what to pass, pass me a 9\n");
+			        exit(1);
+		        }
 			int stat = atoi(argv[1]); //get what stat they want to check
 			 //check to see if they're doing something dumb about which slave to alter
-			if( stat<0 || |stat >7){
-				printf(stderr, "You can only access one of eight monitoring channels, 0 -> 7\n 
-						0: 15V_MON \n 
-						1: CUR0, current to Slave 0 \n 
-						2: CUR1, current to Slave 1 \n
-						3: CUR2, current to Slave 2 \n
-						4: CUR3, current to Slave 3 \n
-						5: !FAULT \n
-						6: 3.3VCC \n
-						7: device temperature\n"); //tell them about what they did wrong, and read them their options
+		        if( stat<0 || stat >7){
+				printf("You can only access one of eight monitoring channels, 0 -> 7\n 0: 15V_MON \n 1: CUR0, current to Slave 0 \n 2: CUR1, current to Slave 1 \n 3: CUR2, current to Slave 2 \n 4: CUR3, current to Slave 3 \n 5: !FAULT \n 6: 3.3VCC \n 7: device temperature\n"); //tell them about what they did wrong, and read them their options
 				exit(1); //get out
 			}
 			
 			unsigned char mon_channel = (unsigned char) stat; //convert the channel to unsigned char
-			mon_channel | 0x80; //or it with 1000 0000 which sets the high bit
+			if(v) printf("mon_channel with just the channel in there is %d\n", (int) stat);
+		        mon_channel = mon_channel | 0x80; //or it with 1000 0000 which sets the high bit
 			unsigned char reg = 0x02; //for power control default, this is the register that's necessary
-			retval = arafeWriteRegister(auxFd, reg, value);  //actually write to the register
-			
+			retval = arafeWriteRegister(auxFd, reg, mon_channel);  //actually write to the register
+			if(v) printf("mon_channel to begin with is %d\n", (int) mon_channel);
+		      
+		        int i =0;
 			while((mon_channel & 0x80)){ //the high bit will stay set until the operation is done, so if it's still set, keep checking
 				 //keep reading that register
 				//this while loop will terminate when the the mon_channel finally has the high bit cleared
-				writeToI2C(auxFd , reg, 1, mon_channel);
-				readFromI2C(auxFd, reg | 0x1, 1, mon_channel);
+				if(v) printf("on try %d\n",i); //tell them what call you're on
+			        //arafeWriteRegister(auxFd, reg , mon_channel);
+				arafeReadRegister(auxFd, reg , &mon_channel);
+			        i++;
 			}
+		        if(v) printf("mon channel after read is %d\n", (unsigned int) mon_channel);
 			
-			mon_channel >> 4; //bit shift down by four (eliminate bits [0:3])
-			
+		        result = (mon_channel >> 4) & 0x3;
+		        if(v) printf("result so far is %d\n", result);
+		   		        
 			//okay, now we have the two low bits of the 10 in the monitoring conversion in hand in mon_channel
 			//let's go get the 8 high bits			
 			unsigned char high_bits;
-			reg = 0x03 //switch to register 3, the MONITOR register, where the high bits are stored
-			writeToI2C(auxFd , reg, 1, low_bits);
-			readFromI2C(auxFd, reg | 0x1, 1, low_bits);
-			
-			//okay, finally to form up the answer
-			unsigned char answer = high_bits << 2; //upshift these two
-			answer | (mon_channel | 0x3); //
-			
-			printf("monitoring return value is %d", (int) answer);
-			
+			reg = 0x03; //switch to register 3, the MONITOR register, where the high bits are stored
+		        //arafeWriteRegister(auxFd , reg, high_bits);
+		        arafeReadRegister(auxFd, reg, &high_bits);
+		        if(v) printf("high bits are %d\n", (unsigned int) high_bits);
+			result = result | (high_bits << 2);
+			printf("monitoring return value is %d\n", result);
+	                exit(0);
 		}
 		
 		

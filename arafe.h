@@ -17,10 +17,10 @@ int arafeWriteRegister(int auxFd, unsigned char reg, unsigned char value);
 	/*!
 	\param auxFD
 	\param reg The register in the ARAFE memory you want to write to
-	\param value The value you want to write to that register
+	\param value The byte in that register that you want back after the read completes
 	\return Integer for succes or failure of the function. Zero means success, negative number means failure.
 	*/
-int arafeReadRegister(int axuFx, unsigned char reg);
+int arafeReadRegister(int auxFd, unsigned char reg, unsigned char * value);
 
 //! Function to initialize an ARAFE Master
 	/*!
