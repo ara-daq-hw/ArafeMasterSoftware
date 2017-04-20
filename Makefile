@@ -2,10 +2,10 @@
 
 include ${ARA_DAQ_DIR}/standard_definitions.mk
 Targets = arafed
-arafed : OBJECTS = arafed.o arafe.o arafei2c.o 
+arafed : OBJECTS = arafed.o arafe.o arafei2c.o arafebsl.o
 all: $(Targets)
 
-arafed : arafed.o arafe.o arafei2c.o
+arafed : arafed.o arafe.o arafei2c.o arafebsl.o
 	@echo "<**Linking**> $@ (from $(OBJECTS)) ..."
 	$(LD) $(OBJECTS) $(LDFLAGS) $(ARA_LIBS) -lARAutil -lAraRunControl -lAtriControl -lAraFx2Com  -o $@
 	@chmod 555 $@
