@@ -61,7 +61,7 @@ void main(int argc, char **argv){
 		
 			unsigned char value;
 			//open the file
-		        printf("file name to be loaded: %s\n", argv[0]);
+		        printf("file name to be loaded: %s\n", argv[1]);
 			int file = open(argv[1], O_RDONLY); //open the file you passed me
 			if(!file){
 				printf("Something went wrong with opening the file!\n");
@@ -82,15 +82,18 @@ void main(int argc, char **argv){
 		        printf("About to start programming.... Patience...\n");     
 		   
 		        //okay, start reading the bytes we want to program the ARAFE master with
-			while (read(file, &value, 1) > 0){
+			int i =0; //byte counter
+		        while (read(file, &value, 1) > 0){
 				retval  = arafeWriteBSLRegister(auxFd, value); //write to the register
 				if( retval<0){ //if it fails
 					printf("writing a byte during the BSL installation failed, and retval is %d\n", retval); //say something useful if it's wrong
 					exit(1); //exit
 				}
-				nanosleep(10000000); //hold off for 10 ms between each byte; this is conservative, but whatever
+			        i++;
+			        if((i%1000)==0) printf("Patience, programming byte %d of 14848... \n",i);
+				nanosleep(1000000); //hold off for 10 ms between each byte; this is conservative, but whatever
 			}
-			
+		        printf("Done programming.");
 			disableExpansionPort(auxFd, 0); //disable the expansion port
 			exit(0); //get out
 		}
