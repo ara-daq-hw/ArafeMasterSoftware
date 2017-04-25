@@ -9,12 +9,25 @@
  *              syntax is: ./arafed power x x x x where x = 0 for off, 1 for on
  *              example: "./arafed power 1 1 1 1" changes the default power on behavior so that all slaves have power at startup 
  *
- * power -      change the power settings for the four ARAFE slaves
+ * monitor    - report the ADC counts for various monitoring values
+ *              you must give a monitoring value to read
+ *		syntax is ./arafed monitor x where x = 0 -> 7
+ *		example: "./arafed monitor 0" reports the ADC counts for the 15V input monitoring
+ *		0: 15V_INPUT
+ *		1: CUR0, current to slave 0
+ *		2: CUR1, current to slave 1
+ *		3: CUR2, current to slave 2
+ *		4: CUR3, current to slave 3
+ *		5: !FAULT
+ *		6: 3.3VCC
+ *		7: device temperature
+ *
+ * power      - change the power settings for the four ARAFE slaves
  *              you must change all four at once
  *              syntax is: ./arafed power x x x x where x = 0 for off, 1 for on
  *              example: "./arafed power 1 1 1 1" turns all slaves on
  *
- * slave -      send a command to one of the four ARAFE slaves
+ * slave      - send a command to one of the four ARAFE slaves
  *              you must specify a slave, a command, and an argument
  *              slave must be an integer number: 0 -> 3
  *              command must be a hex command from the ARAFE command table, ie 0x00 -> 0XFF (https://github.com/ara-daq-hw/arafe_slave_v2/blob/master/Documentation/ARAFE_slave_protocol.pdf)
