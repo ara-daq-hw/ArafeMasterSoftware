@@ -9,6 +9,8 @@
  *              syntax is: ./arafed power x x x x where x = 0 for off, 1 for on
  *              example: "./arafed power 1 1 1 1" changes the default power on behavior so that all slaves have power at startup 
  *
+ * help       - prints out available functions
+ *
  * monitor    - report the ADC counts for various monitoring values
  *              you must give a monitoring value to read
  *		syntax is ./arafed monitor x where x = 0 -> 7
