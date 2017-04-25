@@ -34,7 +34,7 @@
  *              slave must be an integer number: 0 -> 3
  *              command must be a hex command from the ARAFE command table, ie 0x00 -> 0XFF (https://github.com/ara-daq-hw/arafe_slave_v2/blob/master/Documentation/ARAFE_slave_protocol.pdf)
  *              argument must be a valid hex argument from the ARAFE argument list, ie 0x00 -> 0xFF (https://github.com/ara-daq-hw/arafe_slave_v2/blob/master/Documentation/ARAFE_slave_protocol.pdf)
- * 
+ *              example: "./arafed slave command arg" where slave is an int 0 ->3, command is a hex value, arg is a hex value
  * 
  * need to write a "read monitoring" function
  *
@@ -299,7 +299,12 @@ int main(int argc, char **argv){
 		
 		if (strstr(*argv, "help")) { //they need help!
 			printf("Available commands are :\n");
-			printf(" 'power x x x x' Sets the current operations for the slaves. Use is 'power 1 1 1 1' would turn all slaves on, etc");
+			printf(" 'defaultpwr x x x x' Sets the default power setting for the slaves. Example: 'defaultpwr 1 1 1 1' would turn all slaves on by default\n");
+			printf(" 'monitor x' Retreives the ADC counts for monitoring value x. Example: 'monitor 0 ' would return the ADC counts for a reading of the the 15V input\n");
+			printf(" 'power x x x x' Sets the current power settings for the slaves. Example: 'power 1 1 1 1' would turn all slaves on, etc\n");
+			printf(" 'slave  x x x' Sets the current power settings for the slaves. Example: 'power 1 1 1 1' would turn all slaves on, etc\n");
+
+
 		}		
 
 		argc--; argv++; //now, advance the argument
