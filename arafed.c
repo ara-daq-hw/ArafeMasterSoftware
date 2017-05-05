@@ -187,7 +187,7 @@ int main(int argc, char **argv){
 			//we do this check so that the transmission registers aren't pre-loaded with something before we know if the transmission will be valid
 			int slave = atoi(argv[1]);
 			 //check to see if they're doing something dumb about which slave to alter
-			if( slave < 0 || slave !=0 || slave !=1 || slave !=2 || slave !=3){
+			if( slave < 0 || slave >3){
 				printf(stderr, "You can only turn on one of the four slaves (indexed 0 -> 3)\n"); //tell them
 				exit(1); //get out
 			}
@@ -220,21 +220,32 @@ int main(int argc, char **argv){
 			}
 			if(v) printf("setting the argument register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
 
+			
 			//need to set the slavectrl register, register 4
 			//we set the slavectrl register last because setting the high bit of this register will actually trigger the dispatch to the slave
-			char str_ctrl[8]; //declare a blank eight bits
-			int settings[] = {0,0,0,0}; //declare an array for the four slaves they can pick from, and intialize with using "none", so all zeros
-			settings[slave] = 1; //for whatever slave they want turned on, turn that one on
-			sprintf(str_ctrl,"1000%d%d%d%d",settings[0],settings[1],settings[2],settings[3]); //form this up in binary 
-			int int_ver = (int) strtol(str_ctrl, NULL, 2); //convert it to a integer number
-			unsigned char value = (unsigned char) int_ver; //convert it to an unsigned character
-			unsigned char reg = 0x04; //for power control, this is the register that's necessary
-			retval = arafeWriteRegister(auxFd, command_reg, command); //actually write to the register
+			unsigned char command;
+			
+			//there are only four options
+			//100000xx, where xx decides which of the four slaves (0->3) to send to
+			//so let's do the easy thing, and just hard code them
+			if(slave==0) command = 0x80; //if you want to send to slave 0
+			else if (slave==1) command = 0x81; //if you want to send to slave 1
+			else if (slave==2) command = 0x82; //if you want to send to slave 2
+			else if (slave ==3) command = 0x03; //if you want to send to slave 3
+			else printf("You have entered an invalid slave number");
+			unsigned char ctrl_reg = 0x04; //for power control, this is the register that's necessary
+			retval = arafeWriteRegister(auxFd, ctrl_reg, command); //actually write to the register
 			if( retval<0){ //if it fails
 				printf("retval is %d, and setting the control register failed\n", retval); //say something useful if it's wrong
 				exit(1); //exit
 			}
 			if(v) printf("setting the control register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
+
+			//check for timeout
+			unsigned char updated_reg; //we need to read the register and see if the high bit got set, which would mark a timeout condition
+			arafeReadRegister(auxFd, ctrl_reg , &updated_reg); //read the register
+			if((updated_reg <<1)>>7) printf("The slave reported a timeout condition"); //check if the sixth bit is set high (shift up 1 to kill the 7th bit, then shift down 7 to put the sixth bit in the zero position)
+			
 			disableExpansionPort(auxFd, 0); //enable the expansion port
 			exit(0);
 			
@@ -271,12 +282,12 @@ int main(int argc, char **argv){
 		      
 		        int i =0;
 			while((mon_channel & 0x80)){ //the high bit will stay set until the operation is done, so if it's still set, keep checking
-				 //keep reading that register
+				//keep reading that register
 				//this while loop will terminate when the the mon_channel finally has the high bit cleared
 				if(v) printf("on try %d\n",i); //tell them what call you're on
 			        //arafeWriteRegister(auxFd, reg , mon_channel);
 				arafeReadRegister(auxFd, reg , &mon_channel);
-			        i++;
+			     i++;
 			}
 		        if(v) printf("mon channel after read is %d\n", (unsigned int) mon_channel);
 			
