@@ -199,8 +199,7 @@ int main(int argc, char **argv){
 			
 			
 			//need to set the argument register, register 6
-			int int_ver_argument = atoi(argv[3]); //get the argument they entered
-			unsigned char argument = (unsigned char) int_ver_argument; //convert this to an unsigned character
+			unsigned char argument = (unsigned char) atoi(argv[3]);
 			unsigned char argument_reg = 0x06; //the argument register for the ARAFE master is register 6
 			retval = arafeWriteRegister(auxFd, argument_reg, argument); //actually write to the register	
 			if( retval<0){ //if it fails
@@ -208,7 +207,7 @@ int main(int argc, char **argv){
 				exit(1); //exit
 			}
 			if(v) printf("setting the argument register was successful, and retval is %d\n", retval); //print out a confirmation if verbosity is active
-			
+		
 			//need to set the slavectrl register, register 4
 			//we set the slavectrl register last because setting the high bit of this register will actually trigger the dispatch to the slave
 			
