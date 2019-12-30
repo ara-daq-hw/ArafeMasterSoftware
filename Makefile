@@ -6,6 +6,9 @@ arafed : OBJECTS = arafed.o arafe.o arafei2c.o
 arafebsl : OBJECTS = arafebsl.o arafe.o arafei2c.o
 all: $(Targets)
 
+arafed_debug :
+	gcc -DDEBUG arafed.c arafe_debug.c -o arafed_debug
+
 arafed : arafed.o arafe.o arafei2c.o arafebsl.o
 	@echo "<**Linking**> $@ (from $(OBJECTS)) ..."
 	$(LD) $(OBJECTS) $(LDFLAGS) $(ARA_LIBS) -lARAutil -lAraRunControl -lAtriControl -lAraFx2Com  -o $@
